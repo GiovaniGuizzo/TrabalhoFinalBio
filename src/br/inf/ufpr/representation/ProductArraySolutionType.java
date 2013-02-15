@@ -25,11 +25,11 @@ public class ProductArraySolutionType extends SolutionType {
 
     @Override
     public Variable[] createVariables() throws ClassNotFoundException {
-        int numberOfVariables = random.nextInt(problem.getNumberOfVariables()) + 1;
+        int numberOfVariables = random.nextInt(products.size()) + 1;
         Variable[] variables = new Variable[numberOfVariables];
         List<Product> excludeProducts = new ArrayList<>();
         for (int var = 0; var < numberOfVariables; var++) {
-            variables[var] = new ProductVariable(problem.getUpperLimit(var), products, excludeProducts);
+            variables[var] = new ProductVariable(products.size(), products, excludeProducts);
         }
         return variables;
     }

@@ -13,12 +13,13 @@ import jmetal.core.Variable;
  *
  * @author giovaniguizzo
  */
-public class ProductVariable extends Variable {
+public class ProductVariable extends Variable implements Comparable<ProductVariable> {
 
     private Product product;
     private double upperBound;
 
     protected ProductVariable() {
+        product = new Product(-1);
     }
 
     public ProductVariable(double upperBound, List<Product> products, List<Product> excludedProducts) {
@@ -54,5 +55,10 @@ public class ProductVariable extends Variable {
         productVariable.setUpperBound(this.getUpperBound());
         productVariable.setProduct(this.getProduct());
         return productVariable;
+    }
+
+    @Override
+    public int compareTo(ProductVariable o) {
+        return Long.compare(this.getProduct().getId(), o.getProduct().getId());
     }
 }
