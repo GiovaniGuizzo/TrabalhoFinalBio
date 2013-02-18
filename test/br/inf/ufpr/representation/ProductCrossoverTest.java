@@ -1,22 +1,35 @@
-package br.inf.ufpr.main;
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package br.inf.ufpr.representation;
 
+import br.inf.ufpr.main.Main;
 import br.inf.ufpr.pojo.Product;
 import br.inf.ufpr.reader.Reader;
-import br.inf.ufpr.representation.ProductCrossover;
-import br.inf.ufpr.representation.ProductVariable;
-import br.inf.ufpr.representation.TestCaseMinimizationProblem;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jmetal.core.Solution;
 import jmetal.util.JMException;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
-public class Main {
+/**
+ *
+ * @author giovaniguizzo
+ */
+public class ProductCrossoverTest {
 
-    public static void main(String[] args) {
+    public ProductCrossoverTest() {
+    }
+
+    @Test
+    public void testExecute() throws Exception {
         File file = new File(Main.class.getResource("/br/inf/ufpr/resource/input.txt").getPath());
         Reader reader = new Reader(file, " ");
         reader.read();
@@ -38,27 +51,30 @@ public class Main {
         parameters.put("probability", 1D);
         ProductCrossover productCrossover = new ProductCrossover(parameters);
 
-        Solution[] offSpring = null;
+        Solution[] offSpringArray = null;
         try {
-            offSpring = (Solution[]) productCrossover.execute(new Solution[]{solution, solution2});
+            offSpringArray = (Solution[]) productCrossover.execute(new Solution[]{solution, solution2});
         } catch (JMException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        System.out.println("Parent 1:");
-        System.out.println(((ProductVariable[]) solution.getDecisionVariables())[0].getProduct().getId());
-        System.out.println(((ProductVariable[]) solution.getDecisionVariables())[1].getProduct().getId());
-        
-        System.out.println("Parent 2:");
-        System.out.println(((ProductVariable[]) solution2.getDecisionVariables())[0].getProduct().getId());
-        System.out.println(((ProductVariable[]) solution2.getDecisionVariables())[1].getProduct().getId());
-        
-        System.out.println("Offspring 1:");
-        System.out.println(((ProductVariable[]) offSpring[0].getDecisionVariables())[0].getProduct().getId());
-        System.out.println(((ProductVariable[]) offSpring[0].getDecisionVariables())[1].getProduct().getId());
-        
-        System.out.println("Offspring 2:");
-        System.out.println(((ProductVariable[]) offSpring[1].getDecisionVariables())[0].getProduct().getId());
-        System.out.println(((ProductVariable[]) offSpring[1].getDecisionVariables())[1].getProduct().getId());
+        //Gerou dois filhos?
+        assertTrue(offSpringArray.length == 2);
+
+        for (Solution offSpring : offSpringArray) {
+            //O filho tem duas variaveis?
+            assertTrue(offSpring.getDecisionVariables().length == 2);
+
+            ProductVariable[] variablesTemp = (ProductVariable[]) offSpring.getDecisionVariables();
+            for (ProductVariable productVariable : variablesTemp) {
+                //O produto (variavel) tem ID maior que zero?
+                assertTrue(productVariable.getProduct().getId() >= 0);
+                //O produto (variavel) tem ID menor que o tamanho da lista de produtos?
+                assertTrue(productVariable.getProduct().getId() < reader.getProducts().size());
+                //O produto (variavel) está presente em um dos pais?
+                assertTrue(Arrays.asList(variables).contains(productVariable)
+                        || Arrays.asList(variables2).contains(productVariable));
+            }
+        }
     }
 }

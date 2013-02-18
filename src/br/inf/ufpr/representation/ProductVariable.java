@@ -6,6 +6,7 @@ package br.inf.ufpr.representation;
 
 import br.inf.ufpr.pojo.Product;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 import jmetal.core.Variable;
 
@@ -69,5 +70,27 @@ public class ProductVariable extends Variable implements Comparable<ProductVaria
         } else {
             return Long.compare(this.getProduct().getId(), o.getProduct().getId());
         }
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 67 * hash + Objects.hashCode(this.product);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final ProductVariable other = (ProductVariable) obj;
+        if (!Objects.equals(this.product, other.product)) {
+            return false;
+        }
+        return true;
     }
 }
