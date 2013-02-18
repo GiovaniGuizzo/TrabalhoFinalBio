@@ -41,7 +41,7 @@ public class ProductMutant {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 97 * hash + Objects.hashCode(this.mutant);
+        hash = 17 * hash + Objects.hashCode(this.mutant);
         return hash;
     }
 

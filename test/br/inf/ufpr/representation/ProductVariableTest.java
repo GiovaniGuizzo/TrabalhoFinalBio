@@ -4,6 +4,7 @@
  */
 package br.inf.ufpr.representation;
 
+import br.inf.ufpr.representation.variable.ProductVariable;
 import br.inf.ufpr.main.Main;
 import br.inf.ufpr.pojo.Product;
 import br.inf.ufpr.reader.Reader;
@@ -25,8 +26,7 @@ public class ProductVariableTest {
 
     @Test
     public void testConstructor() {
-        File file = new File(Main.class.getResource("/br/inf/ufpr/resource/input.txt").getPath());
-        Reader reader = new Reader(file, " ");
+        Reader reader = Reader.getDefaultReader();
         reader.read();
         List<Product> products = reader.getProducts();
         List<Product> excludeProducts = new ArrayList<>(Arrays.asList(new Product(3), new Product(4), new Product(5)));

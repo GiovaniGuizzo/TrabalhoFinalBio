@@ -1,5 +1,6 @@
 package br.inf.ufpr.reader;
 
+import br.inf.ufpr.main.Main;
 import br.inf.ufpr.pojo.Mutant;
 import br.inf.ufpr.pojo.Product;
 import br.inf.ufpr.pojo.ProductMutant;
@@ -19,7 +20,7 @@ public class Reader {
     private File file;
     private List<Mutant> mutants;
     private List<Product> products;
-    private List<ProductMutant> productMutantList;
+    private static Reader INSTANCE;
 
     public Reader(String filePath, String separator) {
         this(new File(filePath), separator);
@@ -46,31 +47,6 @@ public class Reader {
         return products;
     }
 
-    public List<ProductMutant> getProductMutantList() {
-        return productMutantList;
-    }
-
-    public boolean[][] getProductMutantListAsValueArray() {
-        int columnsSize = products.size();
-        int linesSize = mutants.size();
-        Iterator<ProductMutant> iterator = productMutantList.iterator();
-
-        boolean[][] array = new boolean[linesSize][columnsSize];
-        int column = 0;
-        int line = 0;
-
-        while (line < linesSize) {
-            while (column < columnsSize) {
-                ProductMutant next = iterator.next();
-                array[line][column] = next.isKilled();
-                column++;
-            }
-            line++;
-        }
-
-        return array;
-    }
-
     private List<Product> buildProductList(String fileLine) {
         List<Product> list = new ArrayList<>();
 
@@ -79,7 +55,7 @@ public class Reader {
             try {
                 Long valueOf = Long.valueOf(string);
                 Product product = new Product(valueOf);
-                product.setProductMutantList(productMutantList);
+                product.setProductMutantList(new ArrayList<ProductMutant>());
                 list.add(product);
             } catch (NumberFormatException nfe) {
                 //Skip if not number;
@@ -96,8 +72,6 @@ public class Reader {
             //Products IDs
             String line = scanner.nextLine();
 
-            productMutantList = new ArrayList<>();
-
             //Build product objects
             products = buildProductList(line);
 
@@ -112,18 +86,28 @@ public class Reader {
                 //First value is the Mutant ID
                 Long id = Long.valueOf(tokenIterator.next());
                 Mutant mutant = new Mutant(id);
-                mutant.setProductMutantList(productMutantList);
+                mutant.setProductMutantList(new ArrayList<ProductMutant>());
                 mutants.add(mutant);
                 Iterator<Product> productIterator = products.iterator();
                 while (tokenIterator.hasNext() && productIterator.hasNext()) {
                     Boolean value = Boolean.valueOf(tokenIterator.next());
                     Product product = productIterator.next();
                     ProductMutant productMutant = new ProductMutant(product, mutant, value);
-                    productMutantList.add(productMutant);
+                    product.getProductMutantList().add(productMutant);
+                    mutant.getProductMutantList().add(productMutant);
                 }
             }
         } catch (FileNotFoundException ex) {
             Logger.getLogger(Reader.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    public static Reader getDefaultReader() {
+        if (INSTANCE == null) {
+            File file = new File(Main.class.getResource("/br/inf/ufpr/resource/input.txt").getPath());
+            INSTANCE = new Reader(file, " ");
+            INSTANCE.read();
+        }
+        return INSTANCE;
     }
 }

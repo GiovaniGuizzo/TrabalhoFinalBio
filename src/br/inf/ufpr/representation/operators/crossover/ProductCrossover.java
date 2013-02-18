@@ -2,8 +2,10 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package br.inf.ufpr.representation;
+package br.inf.ufpr.representation.operators.crossover;
 
+import br.inf.ufpr.representation.solution.ProductArraySolutionType;
+import br.inf.ufpr.representation.variable.ProductVariable;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -69,15 +71,37 @@ public class ProductCrossover extends Crossover {
                 int parentLength1 = parent1.getDecisionVariables().length;
                 int parentLength2 = parent2.getDecisionVariables().length;
                 int offspringSize = parentLength1 / 2 + parentLength2 / 2;
+
+                ProductVariable[] newVariables;
                 for (Solution solution : offSpring) {
-                    ProductVariable[] newVariables = new ProductVariable[offspringSize];
-                    for (int i = 0; i < offspringSize; i++) {
-                        newVariables[i] = new ProductVariable();
+                    if (offspringSize == 0) {
+                        offspringSize = 1;
+                        newVariables = new ProductVariable[offspringSize];
+                        Solution temporarySolution;
+                        if (PseudoRandom.randInt(1, 2) == 1) {
+                            temporarySolution = parent1;
+                        } else {
+                            temporarySolution = parent2;
+                        }
+                        int randInt = PseudoRandom.randInt(0, temporarySolution.getDecisionVariables().length - 1);
+                        ProductVariable temp = (ProductVariable) temporarySolution.getDecisionVariables()[randInt];
+                        newVariables[0] = temp;
+                    } else {
+                        newVariables = new ProductVariable[offspringSize];
+                        for (int i = 0; i < offspringSize; i++) {
+                            newVariables[i] = new ProductVariable();
+                        }
+                        int pos = 0;
+                        if (parentLength1 < parentLength2) {
+                            populateVariableArray(pos, parentLength1, parent1, newVariables);
+                            pos = parentLength1 / 2;
+                            populateVariableArray(pos, parentLength2, parent2, newVariables);
+                        } else {
+                            populateVariableArray(pos, parentLength2, parent2, newVariables);
+                            pos = parentLength2 / 2;
+                            populateVariableArray(pos, parentLength1, parent1, newVariables);
+                        }
                     }
-                    int pos = 0;
-                    populateVariableArray(pos, parentLength1, parent1, newVariables);
-                    pos = parentLength1 / 2;
-                    populateVariableArray(pos, parentLength2, parent2, newVariables);
                     solution.setDecisionVariables(newVariables);
                 }
             }

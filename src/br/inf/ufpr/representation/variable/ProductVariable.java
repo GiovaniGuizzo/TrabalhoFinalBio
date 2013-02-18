@@ -2,13 +2,14 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package br.inf.ufpr.representation;
+package br.inf.ufpr.representation.variable;
 
 import br.inf.ufpr.pojo.Product;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 import jmetal.core.Variable;
+import jmetal.util.JMException;
 
 /**
  *
@@ -19,7 +20,8 @@ public class ProductVariable extends Variable implements Comparable<ProductVaria
     private Product product = null;
     private double upperBound;
 
-    protected ProductVariable() {
+    public ProductVariable() {
+        product = new Product();
     }
 
     public ProductVariable(double upperBound, List<Product> products, List<Product> excludedProducts) {
@@ -50,10 +52,10 @@ public class ProductVariable extends Variable implements Comparable<ProductVaria
     }
 
     @Override
-    public Variable deepCopy() {
+    public ProductVariable deepCopy() {
         ProductVariable productVariable = new ProductVariable();
         productVariable.setUpperBound(this.getUpperBound());
-        productVariable.setProduct(this.getProduct());
+        productVariable.setProduct(new Product(this.getProduct()));
         return productVariable;
     }
 
@@ -92,5 +94,15 @@ public class ProductVariable extends Variable implements Comparable<ProductVaria
             return false;
         }
         return true;
+    }
+
+    @Override
+    public double getValue() throws JMException {
+        return product.getId();
+    }
+
+    @Override
+    public String toString() {
+        return String.valueOf(product.getId());
     }
 }

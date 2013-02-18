@@ -8,6 +8,11 @@ public class Product {
     private long id = Long.MAX_VALUE;
     private List<ProductMutant> productMutantList = new ArrayList<>();
 
+    public Product(Product product){
+        this.id = product.getId();
+        productMutantList.addAll(product.getProductMutantList());
+    }
+    
     public Product() {
     }
 

@@ -2,9 +2,10 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package br.inf.ufpr.representation;
+package br.inf.ufpr.representation.solution;
 
 import br.inf.ufpr.pojo.Product;
+import br.inf.ufpr.representation.variable.ProductVariable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -26,11 +27,31 @@ public class ProductArraySolutionType extends SolutionType {
     @Override
     public Variable[] createVariables() throws ClassNotFoundException {
         int numberOfVariables = random.nextInt(products.size()) + 1;
-        Variable[] variables = new Variable[numberOfVariables];
+        ProductVariable[] variables = new ProductVariable[numberOfVariables];
         List<Product> excludeProducts = new ArrayList<>();
         for (int var = 0; var < numberOfVariables; var++) {
             variables[var] = new ProductVariable(products.size(), products, excludeProducts);
         }
+        return variables;
+    }
+
+    public int getUpperBound() {
+        return products.size();
+    }
+
+    public List<Product> getProducts() {
+        return products;
+    }
+
+    @Override
+    public ProductVariable[] copyVariables(Variable[] vars) {
+        ProductVariable[] variables;
+
+        variables = new ProductVariable[vars.length];
+        for (int var = 0; var < vars.length; var++) {
+            variables[var] = (ProductVariable) vars[var].deepCopy();
+        } // for
+
         return variables;
     }
 }

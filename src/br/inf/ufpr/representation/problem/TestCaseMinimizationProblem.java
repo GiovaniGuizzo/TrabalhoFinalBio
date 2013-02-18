@@ -2,16 +2,17 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package br.inf.ufpr.representation;
+package br.inf.ufpr.representation.problem;
 
+import br.inf.ufpr.representation.solution.ProductArraySolutionType;
 import br.inf.ufpr.pojo.Mutant;
 import br.inf.ufpr.pojo.Product;
 import br.inf.ufpr.pojo.ProductMutant;
+import br.inf.ufpr.representation.variable.ProductVariable;
 import java.util.HashSet;
 import java.util.List;
 import jmetal.core.Problem;
 import jmetal.core.Solution;
-import jmetal.core.Variable;
 import jmetal.util.JMException;
 
 /**

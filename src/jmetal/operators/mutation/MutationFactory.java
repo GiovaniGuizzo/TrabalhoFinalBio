@@ -18,9 +18,9 @@
 // 
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 package jmetal.operators.mutation;
 
+import br.inf.ufpr.representation.operators.mutation.ProductMutation;
 import java.util.HashMap;
 import java.util.Properties;
 
@@ -33,27 +33,29 @@ import jmetal.util.JMException;
  * Class implementing a factory for Mutation objects.
  */
 public class MutationFactory {
-  
-  /**
-   * Gets a crossover operator through its name.
-   * @param name of the operator
-   * @return the operator
-   * @throws JMException 
-   */
-  public static Mutation getMutationOperator(String name, HashMap parameters) throws JMException{
- 
-    if (name.equalsIgnoreCase("PolynomialMutation"))
-      return new PolynomialMutation(parameters);
-    else if (name.equalsIgnoreCase("BitFlipMutation"))
-      return new BitFlipMutation(parameters);
-    else if (name.equalsIgnoreCase("SwapMutation"))
-      return new SwapMutation(parameters);
-    else
-    {
-      Configuration.logger_.severe("Operator '" + name + "' not found ");
-      Class cls = java.lang.String.class;
-      String name2 = cls.getName() ;    
-      throw new JMException("Exception in " + name2 + ".getMutationOperator()") ;
-    }        
-  } // getMutationOperator
+
+    /**
+     * Gets a crossover operator through its name.
+     *
+     * @param name of the operator
+     * @return the operator
+     * @throws JMException
+     */
+    public static Mutation getMutationOperator(String name, HashMap parameters) throws JMException {
+
+        if (name.equalsIgnoreCase("PolynomialMutation")) {
+            return new PolynomialMutation(parameters);
+        } else if (name.equalsIgnoreCase("BitFlipMutation")) {
+            return new BitFlipMutation(parameters);
+        } else if (name.equalsIgnoreCase("SwapMutation")) {
+            return new SwapMutation(parameters);
+        } else if (name.equalsIgnoreCase("ProductMutation")) {
+            return new ProductMutation(parameters);
+        } else {
+            Configuration.logger_.severe("Operator '" + name + "' not found ");
+            Class cls = java.lang.String.class;
+            String name2 = cls.getName();
+            throw new JMException("Exception in " + name2 + ".getMutationOperator()");
+        }
+    } // getMutationOperator
 } // MutationFactory
