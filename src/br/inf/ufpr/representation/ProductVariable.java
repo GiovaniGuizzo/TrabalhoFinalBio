@@ -15,11 +15,10 @@ import jmetal.core.Variable;
  */
 public class ProductVariable extends Variable implements Comparable<ProductVariable> {
 
-    private Product product;
+    private Product product = null;
     private double upperBound;
 
     protected ProductVariable() {
-        product = new Product(-1);
     }
 
     public ProductVariable(double upperBound, List<Product> products, List<Product> excludedProducts) {
@@ -59,6 +58,16 @@ public class ProductVariable extends Variable implements Comparable<ProductVaria
 
     @Override
     public int compareTo(ProductVariable o) {
-        return Long.compare(this.getProduct().getId(), o.getProduct().getId());
+        if (o == null) {
+            return -1;
+        } else if (this.getProduct() == null && o.getProduct() == null) {
+            return 0;
+        } else if (o.getProduct() == null) {
+            return -1;
+        } else if (this.getProduct() == null) {
+            return 1;
+        } else {
+            return Long.compare(this.getProduct().getId(), o.getProduct().getId());
+        }
     }
 }

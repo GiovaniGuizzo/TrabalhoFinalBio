@@ -71,7 +71,7 @@ public class ProductCrossover extends Crossover {
                 int offspringSize = parentLength1 / 2 + parentLength2 / 2;
                 for (Solution solution : offSpring) {
                     ProductVariable[] newVariables = new ProductVariable[offspringSize];
-                    for(int i = 0; i<offspringSize; i++){
+                    for (int i = 0; i < offspringSize; i++) {
                         newVariables[i] = new ProductVariable();
                     }
                     int pos = 0;
@@ -92,7 +92,7 @@ public class ProductCrossover extends Crossover {
     private void populateVariableArray(int pos, int parentLength, Solution parent, ProductVariable[] newVariables) {
         int i = 0;
         while (i < parentLength / 2) {
-            int randInt = PseudoRandom.randInt(0, parentLength-1);
+            int randInt = PseudoRandom.randInt(0, parentLength - 1);
             ProductVariable temp = (ProductVariable) parent.getDecisionVariables()[randInt];
             if (Arrays.binarySearch(newVariables, temp) < 0) {
                 newVariables[pos] = (ProductVariable) temp.deepCopy();

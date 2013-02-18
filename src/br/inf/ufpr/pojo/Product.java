@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Product {
 
-    private long id;
+    private long id = Long.MAX_VALUE;
     private List<ProductMutant> productMutantList = new ArrayList<>();
 
     public Product() {
