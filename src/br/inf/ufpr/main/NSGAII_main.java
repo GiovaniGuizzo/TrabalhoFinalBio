@@ -93,8 +93,8 @@ public class NSGAII_main {
         //algorithm = new ssNSGAII(problem);
 
         // Algorithm parameters
-        algorithm.setInputParameter("populationSize", 100);
-        algorithm.setInputParameter("maxEvaluations", 25000);
+        algorithm.setInputParameter("populationSize", 1000);
+        algorithm.setInputParameter("maxEvaluations", 2500000);
 
         // Mutation and Crossover for Real codification 
         parameters = new HashMap();
@@ -103,7 +103,7 @@ public class NSGAII_main {
         crossover = CrossoverFactory.getCrossoverOperator("ProductCrossover", parameters);
 
         parameters = new HashMap();
-        parameters.put("probability", 0.1);
+        parameters.put("probability", 0.5);
         mutation = MutationFactory.getMutationOperator("ProductMutation", parameters);
 
         // Selection Operator 

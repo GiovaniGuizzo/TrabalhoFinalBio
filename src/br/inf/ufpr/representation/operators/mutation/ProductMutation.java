@@ -23,7 +23,7 @@ import jmetal.util.PseudoRandom;
  * @author giovaniguizzo
  */
 public class ProductMutation extends Mutation {
-    
+
     private Double crossoverProbability = 0D;
 
     public ProductMutation(HashMap<String, Object> parameters) {
@@ -36,13 +36,15 @@ public class ProductMutation extends Mutation {
     @Override
     public Object execute(Object object) throws JMException {
         Solution solution = (Solution) object;
-        removeVariableMutation(solution, crossoverProbability);
-        addVariableMutation(solution, crossoverProbability);
-        changeVariableMutation(solution, crossoverProbability);
+        if (!addVariableMutation(solution, crossoverProbability)) {
+            if (changeVariableMutation(solution, crossoverProbability)) {
+                removeVariableMutation(solution, crossoverProbability);
+            }
+        }
         return solution;
     }
 
-    public void removeVariableMutation(Solution solution, Double probability) {
+    public boolean removeVariableMutation(Solution solution, Double probability) {
         if (PseudoRandom.randDouble() < probability) {
             ProductVariable[] decisionVariables = (ProductVariable[]) solution.getDecisionVariables();
             if (decisionVariables.length > 1) {
@@ -56,11 +58,13 @@ public class ProductMutation extends Mutation {
                     }
                 }
                 solution.setDecisionVariables(newVariables);
+                return true;
             }
         }
+        return false;
     }
 
-    public void addVariableMutation(Solution solution, Double probability) {
+    public boolean addVariableMutation(Solution solution, Double probability) {
         if (PseudoRandom.randDouble() < probability) {
             ProductVariable[] decisionVariables = (ProductVariable[]) solution.getDecisionVariables();
             ProductArraySolutionType solutionType = (ProductArraySolutionType) solution.getType();
@@ -72,11 +76,13 @@ public class ProductMutation extends Mutation {
                 }
                 newVariables[newVariables.length - 1] = new ProductVariable(solutionType.getUpperBound(), solutionType.getProducts(), excluded);
                 solution.setDecisionVariables(newVariables);
+                return true;
             }
         }
+        return false;
     }
-    
-    public void changeVariableMutation(Solution solution, Double probability) {
+
+    public boolean changeVariableMutation(Solution solution, Double probability) {
         if (PseudoRandom.randDouble() < probability) {
             ProductVariable[] decisionVariables = (ProductVariable[]) solution.getDecisionVariables();
             ProductArraySolutionType solutionType = (ProductArraySolutionType) solution.getType();
@@ -89,7 +95,9 @@ public class ProductMutation extends Mutation {
                 decisionVariables = Arrays.copyOf(decisionVariables, decisionVariables.length);
                 decisionVariables[index] = new ProductVariable(solutionType.getUpperBound(), solutionType.getProducts(), excluded);
                 solution.setDecisionVariables(decisionVariables);
+                return true;
             }
         }
+        return false;
     }
 }
