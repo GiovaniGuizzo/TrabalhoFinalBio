@@ -22,6 +22,9 @@ package br.inf.ufpr.main;
 
 import br.inf.ufpr.reader.Reader;
 import br.inf.ufpr.representation.problem.TestCaseMinimizationProblem;
+import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import jmetal.metaheuristics.nsgaII.*;
 import jmetal.core.*;
 import jmetal.operators.crossover.*;
@@ -33,11 +36,13 @@ import jmetal.util.Configuration;
 import jmetal.util.JMException;
 
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.*;
 
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jmetal.qualityIndicator.Hypervolume;
 
 import jmetal.qualityIndicator.QualityIndicator;
 
@@ -115,7 +120,11 @@ public class NSGAII_main {
         algorithm.addOperator("mutation", mutation);
         algorithm.addOperator("selection", selection);
 
-        for (int i = 0; i < 30; i++) {
+        int execucoes = 30;
+        double[] hypervolume = new double[execucoes];
+
+        Hypervolume qualityIndicator = new Hypervolume();
+        for (int i = 0; i < execucoes; i++) {
             // Execute the Algorithm
             long initTime = System.currentTimeMillis();
             SolutionSet population = algorithm.execute();
@@ -123,10 +132,57 @@ public class NSGAII_main {
 
             // Result messages 
             population.sortSolutions();
-            population.convertObjective(1);
+//            population.convertObjective(1);
             population.printVariablesToFile("result/VAR_" + i);
             population.printObjectivesToFile("result/FUN_" + i);
-            System.out.println("Execution " + i + " done! Total execution time: " + estimatedTime/1000 + "s");
+
+            //Hypervolume
+            double[][] solutionFront = qualityIndicator.utils_.readFront("result/FUN_" + i);
+
+            //Obtain delta value
+            double value = qualityIndicator.calculateHypervolume(solutionFront, solutionFront.length, 2) * -1;
+
+            System.out.println("Execution " + i + " done! Total execution time: " + estimatedTime / 1000 + "s");
+            System.out.println("Estimated time remain to completion: " + ((29 - i) * (estimatedTime / 1000)) + "s");
+            System.out.println("Hypervolume " + i + ": " + value);
+            hypervolume[i] = value;
         }
+        writeHypervolume("result/hypervolume", execucoes, hypervolume);
     } //main
+
+    public static void writeHypervolume(String filePath, int execucoes, double[] hypervolume) {
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(filePath);
+            OutputStreamWriter osw = new OutputStreamWriter(fos);
+            BufferedWriter bw = new BufferedWriter(osw);
+            double lowerHypervolume = Double.MAX_VALUE;
+            int bestFile = 0;
+            double mean = 0;
+
+            for (int i = 0; i < execucoes; i++) {
+                mean += hypervolume[i];
+                if (hypervolume[i] < lowerHypervolume) {
+                    lowerHypervolume = hypervolume[i];
+                    bestFile = i;
+                }
+                bw.write("Arquivo: " + i + " - Hypervolume: " + hypervolume[i]);
+            }
+
+            mean = mean / execucoes;
+
+            bw.write("Média Hypervolume: " + mean);
+            bw.write("Melhor arquivo: " + bestFile + " - Melhor Hypervolume: " + lowerHypervolume);
+        } catch (IOException ex) {
+            Logger.getLogger(NSGAII_main.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                if (fos != null) {
+                    fos.close();
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(NSGAII_main.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
 } // NSGAII_main

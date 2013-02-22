@@ -7,10 +7,8 @@ package br.inf.ufpr.representation.operators.mutation;
 import br.inf.ufpr.pojo.Product;
 import br.inf.ufpr.representation.solution.ProductArraySolutionType;
 import br.inf.ufpr.representation.variable.ProductVariable;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import jmetal.core.Solution;
@@ -37,7 +35,7 @@ public class ProductMutation extends Mutation {
     public Object execute(Object object) throws JMException {
         Solution solution = (Solution) object;
         if (!addVariableMutation(solution, crossoverProbability)) {
-            if (changeVariableMutation(solution, crossoverProbability)) {
+            if (!changeVariableMutation(solution, crossoverProbability)) {
                 removeVariableMutation(solution, crossoverProbability);
             }
         }
