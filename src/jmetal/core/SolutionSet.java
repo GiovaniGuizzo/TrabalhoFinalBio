@@ -235,6 +235,10 @@ public class SolutionSet implements Serializable {
      */
     public void printObjectivesToFile(String path) {
         try {
+            File file = new File(path);
+            if (!file.exists()) {
+                file.createNewFile();
+            }
             /* Open the file */
             FileOutputStream fos = new FileOutputStream(path);
             OutputStreamWriter osw = new OutputStreamWriter(fos);
@@ -270,7 +274,11 @@ public class SolutionSet implements Serializable {
     public void printVariablesToFile(String path) {
         try {
             /* Open the file */
-            FileOutputStream fos = new FileOutputStream(path);
+            File file = new File(path);
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+            FileOutputStream fos = new FileOutputStream(file);
             OutputStreamWriter osw = new OutputStreamWriter(fos);
             BufferedWriter bw = new BufferedWriter(osw);
 
