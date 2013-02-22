@@ -23,6 +23,7 @@
 package jmetal.core;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 import jmetal.encodings.variable.Binary;
 import jmetal.util.Configuration.*;
@@ -30,7 +31,7 @@ import jmetal.util.Configuration.*;
 /**
  * Class representing a solution for a problem.
  */
-public class Solution implements Serializable {
+public class Solution implements Serializable, Comparable<Solution> {
 
     /**
      * Stores the problem
@@ -541,4 +542,31 @@ public class Solution implements Serializable {
 
         return bits;
     } // getNumberOfBits
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 83 * hash + Arrays.deepHashCode(this.variable_);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Solution other = (Solution) obj;
+        if (!Arrays.deepEquals(this.variable_, other.variable_)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int compareTo(Solution o) {
+        return this.getDecisionVariables().length - o.getDecisionVariables().length;
+    }
 } // Solution

@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.util.*;
 
 import java.util.logging.FileHandler;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import jmetal.qualityIndicator.QualityIndicator;
@@ -78,14 +79,11 @@ public class NSGAII_main {
 
         HashMap parameters; // Operator parameters
 
-        QualityIndicator indicators; // Object to get quality indicators
 
         // Logger object and file to store log messages
         logger_ = Configuration.logger_;
         fileHandler_ = new FileHandler("NSGAII_main.log");
         logger_.addHandler(fileHandler_);
-
-        indicators = null;
 
         problem = new TestCaseMinimizationProblem(Reader.getDefaultReader().getProducts(), Reader.getDefaultReader().getMutants());
 
@@ -94,7 +92,7 @@ public class NSGAII_main {
 
         // Algorithm parameters
         algorithm.setInputParameter("populationSize", 100);
-        algorithm.setInputParameter("maxEvaluations", 2500000);
+        algorithm.setInputParameter("maxEvaluations", 25000);
 
         // Mutation and Crossover for Real codification 
         parameters = new HashMap();
@@ -117,31 +115,18 @@ public class NSGAII_main {
         algorithm.addOperator("mutation", mutation);
         algorithm.addOperator("selection", selection);
 
-        // Add the indicator object to the algorithm
-        algorithm.setInputParameter("indicators", indicators);
+        for (int i = 0; i < 30; i++) {
+            // Execute the Algorithm
+            long initTime = System.currentTimeMillis();
+            SolutionSet population = algorithm.execute();
+            long estimatedTime = System.currentTimeMillis() - initTime;
 
-        // Execute the Algorithm
-        long initTime = System.currentTimeMillis();
-        SolutionSet population = algorithm.execute();
-        long estimatedTime = System.currentTimeMillis() - initTime;
-
-        // Result messages 
-        logger_.info("Total execution time: " + estimatedTime + "ms");
-        logger_.info("Variables values have been writen to file VAR");
-        population.printVariablesToFile("VAR");
-        logger_.info("Objectives values have been writen to file FUN");
-        population.printObjectivesToFile("FUN");
-
-        if (indicators != null) {
-            logger_.info("Quality indicators");
-            logger_.info("Hypervolume: " + indicators.getHypervolume(population));
-            logger_.info("GD         : " + indicators.getGD(population));
-            logger_.info("IGD        : " + indicators.getIGD(population));
-            logger_.info("Spread     : " + indicators.getSpread(population));
-            logger_.info("Epsilon    : " + indicators.getEpsilon(population));
-
-            int evaluations = ((Integer) algorithm.getOutputParameter("evaluations")).intValue();
-            logger_.info("Speed      : " + evaluations + " evaluations");
-        } // if
+            // Result messages 
+            population.sortSolutions();
+            population.convertObjective(1);
+            population.printVariablesToFile("result/VAR_" + i);
+            population.printObjectivesToFile("result/FUN_" + i);
+            System.out.println("Execution " + i + " done! Total execution time: " + estimatedTime/1000 + "s");
+        }
     } //main
 } // NSGAII_main

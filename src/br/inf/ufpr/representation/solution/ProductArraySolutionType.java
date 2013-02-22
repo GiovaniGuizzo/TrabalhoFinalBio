@@ -8,6 +8,7 @@ import br.inf.ufpr.pojo.Product;
 import br.inf.ufpr.representation.variable.ProductVariable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 import jmetal.core.Problem;
 import jmetal.core.SolutionType;
@@ -53,5 +54,27 @@ public class ProductArraySolutionType extends SolutionType {
         } // for
 
         return variables;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 37 * hash + Objects.hashCode(this.products);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final ProductArraySolutionType other = (ProductArraySolutionType) obj;
+        if (!Objects.equals(this.products, other.products)) {
+            return false;
+        }
+        return true;
     }
 }

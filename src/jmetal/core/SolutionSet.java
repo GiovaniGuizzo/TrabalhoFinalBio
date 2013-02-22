@@ -240,11 +240,16 @@ public class SolutionSet implements Serializable {
             OutputStreamWriter osw = new OutputStreamWriter(fos);
             BufferedWriter bw = new BufferedWriter(osw);
 
+            List<Solution> added = new ArrayList<>();
+
             for (int i = 0; i < solutionsList_.size(); i++) {
-                //if (this.vector[i].getFitness()<1.0) {
-                bw.write(solutionsList_.get(i).toString());
-                bw.newLine();
-                //}
+                if (!added.contains(solutionsList_.get(i))) {
+                    added.add(solutionsList_.get(i));
+                    //if (this.vector[i].getFitness()<1.0) {
+                    bw.write(solutionsList_.get(i).toString());
+                    bw.newLine();
+                    //}
+                }
             }
 
             /* Close the file */
@@ -269,11 +274,16 @@ public class SolutionSet implements Serializable {
             OutputStreamWriter osw = new OutputStreamWriter(fos);
             BufferedWriter bw = new BufferedWriter(osw);
 
+            List<Solution> added = new ArrayList<>();
+
             for (int i = 0; i < solutionsList_.size(); i++) {
-                for (Variable variable : solutionsList_.get(i).getDecisionVariables()) {
-                    bw.write(variable.toString() + " ");
+                if (!added.contains(solutionsList_.get(i))) {
+                    added.add(solutionsList_.get(i));
+                    for (Variable variable : solutionsList_.get(i).getDecisionVariables()) {
+                        bw.write(variable.toString() + " ");
+                    }
+                    bw.newLine();
                 }
-                bw.newLine();
             }
 
             /* Close the file */
@@ -374,5 +384,18 @@ public class SolutionSet implements Serializable {
         }
         return objectives;
     } // writeObjectivesMatrix
+
+    public void sortSolutions() {
+        Collections.sort(solutionsList_);
+        for (Solution solution : solutionsList_) {
+            Arrays.sort(solution.getDecisionVariables());
+        }
+    }
+
+    public void convertObjective(int i) {
+        for (Solution solution : solutionsList_) {
+            solution.setObjective(i, solution.getObjective(i) * -1);
+        }
+    }
 } // SolutionSet
 

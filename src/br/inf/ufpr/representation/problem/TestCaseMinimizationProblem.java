@@ -58,6 +58,6 @@ public class TestCaseMinimizationProblem extends Problem {
         solution.setObjective(0, decisionVariables.length);
         solution.setObjective(1, hash.size() * -1);
         
-        System.out.println("Fitness: " + solution.getObjective(0) + " / " + solution.getObjective(1));
+//        System.out.println("Fitness: " + solution.getObjective(0) + " / " + solution.getObjective(1));
     }
 }
