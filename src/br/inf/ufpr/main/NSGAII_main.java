@@ -142,12 +142,12 @@ public class NSGAII_main {
             //Obtain delta value
             double value = qualityIndicator.calculateHypervolume(solutionFront, solutionFront.length, 2) * -1;
 
-            System.out.println("Execution " + i + " done! Total execution time: " + estimatedTime / 1000 + "s");
-            System.out.println("Estimated time remain to completion: " + ((29 - i) * (estimatedTime / 1000)) + "s");
-            System.out.println("Hypervolume " + i + ": " + value);
+//            System.out.println("Execution " + i + " done! Total execution time: " + estimatedTime / 1000 + "s");
+//            System.out.println("Estimated time remain to completion: " + ((29 - i) * (estimatedTime / 1000)) + "s");
+//            System.out.println("Hypervolume " + i + ": " + value);
             hypervolume[i] = value;
         }
-        writeHypervolume("result/hypervolume", execucoes, hypervolume);
+        writeHypervolume("result/HYPERVOLUME", execucoes, hypervolume);
     } //main
 
     public static void writeHypervolume(String filePath, int execucoes, double[] hypervolume) {
@@ -167,12 +167,18 @@ public class NSGAII_main {
                     bestFile = i;
                 }
                 bw.write("Arquivo: " + i + " - Hypervolume: " + hypervolume[i]);
+                bw.newLine();
             }
 
             mean = mean / execucoes;
 
+            bw.newLine();
             bw.write("Média Hypervolume: " + mean);
+            bw.newLine();
             bw.write("Melhor arquivo: " + bestFile + " - Melhor Hypervolume: " + lowerHypervolume);
+            
+            bw.flush();
+            bw.close();
         } catch (IOException ex) {
             Logger.getLogger(NSGAII_main.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
