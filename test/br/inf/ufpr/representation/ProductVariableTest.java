@@ -5,10 +5,8 @@
 package br.inf.ufpr.representation;
 
 import br.inf.ufpr.representation.variable.ProductVariable;
-import br.inf.ufpr.main.Main;
 import br.inf.ufpr.pojo.Product;
 import br.inf.ufpr.reader.Reader;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
