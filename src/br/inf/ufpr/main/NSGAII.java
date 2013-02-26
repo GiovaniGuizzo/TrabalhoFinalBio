@@ -8,7 +8,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jmetal.core.Algorithm;
@@ -37,6 +36,7 @@ public class NSGAII {
     public static double CROSSOVER_PROBABILITY = 0.9;
     public static int POPULATION_SIZE = 100;
     public static int MAX_EVALUATION = 200000;
+    public static int EXECUCOES = 30;
 
     /**
      * @param args Command line arguments.
@@ -103,8 +103,7 @@ public class NSGAII {
         algorithm.addOperator("mutation", mutation);
         algorithm.addOperator("selection", selection);
 
-        int execucoes = 30;
-        double[] hypervolume = new double[execucoes];
+        double[] hypervolume = new double[EXECUCOES];
 
         Hypervolume qualityIndicator = new Hypervolume();
 
@@ -115,7 +114,7 @@ public class NSGAII {
             dir.mkdir();
         }
 
-        for (int i = 0; i < execucoes; i++) {
+        for (int i = 0; i < EXECUCOES; i++) {
             // Execute the Algorithm
 
             SolutionSet population = algorithm.execute();
@@ -139,7 +138,7 @@ public class NSGAII {
             hypervolume[i] = value;
         }
         long estimatedTime = System.currentTimeMillis() - initTime;
-        writeHypervolume("RESULT_" + initTime + "/A_RESULT", execucoes, hypervolume, estimatedTime);
+        writeHypervolume("RESULT_" + initTime + "/A_RESULT", EXECUCOES, hypervolume, estimatedTime);
     } //main
 
     public static void writeHypervolume(String filePath, int execucoes, double[] hypervolume, long estimatedTime) {

@@ -74,16 +74,32 @@ public class ProductCrossover extends Crossover {
 
                 ProductVariable[] newVariables;
                 for (Solution solution : offSpring) {
-                    if (offspringSize == 0) {
-                        if (Arrays.deepEquals(parent1.getDecisionVariables(), parent2.getDecisionVariables())) {
-                            offspringSize = 1;
-                            newVariables = new ProductVariable[offspringSize];
-                            newVariables[0] = (ProductVariable) parent1.getDecisionVariables()[0].deepCopy();
+                    if (parentLength1 == 1 || parentLength2 == 1) {
+                        if (parentLength1 == parentLength2) {
+                            if (Arrays.deepEquals(parent1.getDecisionVariables(), parent2.getDecisionVariables())) {
+                                offspringSize = 1;
+                                newVariables = new ProductVariable[offspringSize];
+                                newVariables[0] = (ProductVariable) parent1.getDecisionVariables()[0].deepCopy();
+                            } else {
+                                offspringSize = 2;
+                                newVariables = new ProductVariable[offspringSize];
+                                newVariables[0] = (ProductVariable) parent1.getDecisionVariables()[0].deepCopy();
+                                newVariables[1] = (ProductVariable) parent2.getDecisionVariables()[0].deepCopy();
+                            }
                         } else {
-                            offspringSize = 2;
+                            offspringSize++;
                             newVariables = new ProductVariable[offspringSize];
-                            newVariables[0] = (ProductVariable) parent1.getDecisionVariables()[0].deepCopy();
-                            newVariables[1] = (ProductVariable) parent2.getDecisionVariables()[0].deepCopy();
+                            int pos = 1;
+                            for (int i = 0; i < offspringSize; i++) {
+                                newVariables[i] = new ProductVariable();
+                            }
+                            if (parentLength1 < parentLength2) {
+                                newVariables[0] = (ProductVariable) parent1.getDecisionVariables()[0].deepCopy();
+                                populateVariableArray(pos, parentLength2, parent2, newVariables);
+                            } else {
+                                newVariables[0] = (ProductVariable) parent2.getDecisionVariables()[0].deepCopy();
+                                populateVariableArray(pos, parentLength1, parent1, newVariables);
+                            }
                         }
                     } else {
                         newVariables = new ProductVariable[offspringSize];
