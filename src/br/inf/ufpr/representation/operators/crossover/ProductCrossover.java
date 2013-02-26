@@ -75,17 +75,16 @@ public class ProductCrossover extends Crossover {
                 ProductVariable[] newVariables;
                 for (Solution solution : offSpring) {
                     if (offspringSize == 0) {
-                        offspringSize = 1;
-                        newVariables = new ProductVariable[offspringSize];
-                        Solution temporarySolution;
-                        if (PseudoRandom.randInt(1, 2) == 1) {
-                            temporarySolution = parent1;
+                        if (Arrays.deepEquals(parent1.getDecisionVariables(), parent2.getDecisionVariables())) {
+                            offspringSize = 1;
+                            newVariables = new ProductVariable[offspringSize];
+                            newVariables[0] = (ProductVariable) parent1.getDecisionVariables()[0].deepCopy();
                         } else {
-                            temporarySolution = parent2;
+                            offspringSize = 2;
+                            newVariables = new ProductVariable[offspringSize];
+                            newVariables[0] = (ProductVariable) parent1.getDecisionVariables()[0].deepCopy();
+                            newVariables[1] = (ProductVariable) parent2.getDecisionVariables()[0].deepCopy();
                         }
-                        int randInt = PseudoRandom.randInt(0, temporarySolution.getDecisionVariables().length - 1);
-                        ProductVariable temp = (ProductVariable) temporarySolution.getDecisionVariables()[randInt];
-                        newVariables[0] = temp;
                     } else {
                         newVariables = new ProductVariable[offspringSize];
                         for (int i = 0; i < offspringSize; i++) {

@@ -51,20 +51,19 @@ public class NSGAII {
             SecurityException,
             IOException,
             ClassNotFoundException {
-
-//        if (args.length < 4) {
-//            System.out.println("You must inform the following arguments:");
-//            System.out.println("\t1 - Population Size (int);");
-//            System.out.println("\t2 - Max Evaluations (int);");
-//            System.out.println("\t3 - Crossover Probability (double);");
-//            System.out.println("\t4 - Mutation Probability (double);");
-//            System.exit(0);
-//        } else {
-//            POPULATION_SIZE = Integer.valueOf(args[0]);
-//            MAX_EVALUATION = Integer.valueOf(args[1]);
-//            CROSSOVER_PROBABILITY = Double.valueOf(args[2]);
-//            MUTATION_PROBABILITY = Double.valueOf(args[3]);
-//        }
+        if (args.length < 4) {
+            System.out.println("You must inform the following arguments:");
+            System.out.println("\t1 - Population Size (int);");
+            System.out.println("\t2 - Max Evaluations (int);");
+            System.out.println("\t3 - Crossover Probability (double);");
+            System.out.println("\t4 - Mutation Probability (double);");
+            System.exit(0);
+        } else {
+            POPULATION_SIZE = Integer.valueOf(args[0]);
+            MAX_EVALUATION = Integer.valueOf(args[1]);
+            CROSSOVER_PROBABILITY = Double.valueOf(args[2]);
+            MUTATION_PROBABILITY = Double.valueOf(args[3]);
+        }
 
         Problem problem; // The problem to solve
         Algorithm algorithm; // The algorithm to use
@@ -122,12 +121,13 @@ public class NSGAII {
 
             // Result messages 
             population.sortSolutions();
-//            population.convertObjective(1);
+            population.convertObjective(1);
             population.printVariablesToFile("RESULT_" + initTime + "/VAR_" + i);
-            population.printObjectivesToFile("RESULT_" + initTime + "/FUN_" + i);
+            population.printObjectivesToFile("RESULT_" + initTime + "/FUN_" + i + ".dat");
 
             //Hypervolume
-            double[][] solutionFront = qualityIndicator.utils_.readFront("RESULT_" + initTime + "/FUN_" + i);
+            population.convertObjective(1);
+            double[][] solutionFront = qualityIndicator.utils_.readFront("RESULT_" + initTime + "/FUN_" + i + ".dat");
 
             //Obtain delta value
             double value = qualityIndicator.calculateHypervolume(solutionFront, solutionFront.length, 2) * -1;
@@ -138,7 +138,7 @@ public class NSGAII {
             hypervolume[i] = value;
         }
         long estimatedTime = System.currentTimeMillis() - initTime;
-        writeHypervolume("RESULT_" + initTime + "/RESULT", execucoes, hypervolume, estimatedTime);
+        writeHypervolume("RESULT_" + initTime + "/A_RESULT", execucoes, hypervolume, estimatedTime);
     } //main
 
     public static void writeHypervolume(String filePath, int execucoes, double[] hypervolume, long estimatedTime) {
@@ -176,13 +176,12 @@ public class NSGAII {
             bw.newLine();
             bw.write("Hypervolume Mean: " + mean);
             bw.newLine();
-            bw.write("Best Pareto: " + bestFile + " - Best Hypervolume: " + lowerHypervolume);
+            bw.write("Best Pareto: Execution " + bestFile);
+            bw.newLine();
+            bw.write("Best Hypervolume: " + lowerHypervolume);
             bw.newLine();
             bw.newLine();
-            bw.write("Execution Time: " + String.format("%dh %dm %ds",
-                    TimeUnit.MILLISECONDS.toHours(estimatedTime),
-                    TimeUnit.MILLISECONDS.toMinutes(estimatedTime) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(estimatedTime)),
-                    TimeUnit.MILLISECONDS.toSeconds(estimatedTime) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(estimatedTime))));
+            bw.write("Execution Time: " + estimatedTime / 100);
 
             bw.flush();
             bw.close();
