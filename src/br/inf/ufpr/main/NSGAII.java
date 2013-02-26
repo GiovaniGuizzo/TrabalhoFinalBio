@@ -51,19 +51,20 @@ public class NSGAII {
             SecurityException,
             IOException,
             ClassNotFoundException {
-        if (args.length < 4) {
-            System.out.println("You must inform the following arguments:");
-            System.out.println("\t1 - Population Size (int);");
-            System.out.println("\t2 - Max Evaluations (int);");
-            System.out.println("\t3 - Crossover Probability (double);");
-            System.out.println("\t4 - Mutation Probability (double);");
-            System.exit(0);
-        } else {
-            POPULATION_SIZE = Integer.valueOf(args[0]);
-            MAX_EVALUATION = Integer.valueOf(args[1]);
-            CROSSOVER_PROBABILITY = Double.valueOf(args[2]);
-            MUTATION_PROBABILITY = Double.valueOf(args[3]);
-        }
+        
+//        if (args.length < 4) {
+//            System.out.println("You must inform the following arguments:");
+//            System.out.println("\t1 - Population Size (int);");
+//            System.out.println("\t2 - Max Evaluations (int);");
+//            System.out.println("\t3 - Crossover Probability (double);");
+//            System.out.println("\t4 - Mutation Probability (double);");
+//            System.exit(0);
+//        } else {
+//            POPULATION_SIZE = Integer.valueOf(args[0]);
+//            MAX_EVALUATION = Integer.valueOf(args[1]);
+//            CROSSOVER_PROBABILITY = Double.valueOf(args[2]);
+//            MUTATION_PROBABILITY = Double.valueOf(args[3]);
+//        }
 
         Problem problem; // The problem to solve
         Algorithm algorithm; // The algorithm to use
