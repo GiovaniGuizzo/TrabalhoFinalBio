@@ -122,15 +122,14 @@ public class NSGAII {
             // Result messages 
             population.sortSolutions();
             population.convertObjective(1);
-            population.printVariablesToFile("RESULT_" + initTime + "/VAR_" + i);
+            population.printVariablesToFile("RESULT_" + initTime + "/VAR_" + i + ".dat");
             population.printObjectivesToFile("RESULT_" + initTime + "/FUN_" + i + ".dat");
 
             //Hypervolume
-            population.convertObjective(1);
             double[][] solutionFront = qualityIndicator.utils_.readFront("RESULT_" + initTime + "/FUN_" + i + ".dat");
 
             //Obtain delta value
-            double value = qualityIndicator.calculateHypervolume(solutionFront, solutionFront.length, 2) * -1;
+            double value = qualityIndicator.calculateHypervolume(solutionFront, solutionFront.length, 2);
 
 //            System.out.println("Execution " + i + " done! Total execution time: " + estimatedTime / 1000 + "s");
 //            System.out.println("Estimated time remain to completion: " + ((29 - i) * (estimatedTime / 1000)) + "s");
