@@ -1,0 +1,10 @@
+Crossover Probability: 0.9
+Mutation Probability: 0.5
+Population Size: 100
+Max Evaluations: 200000
+Number of Generations: 2000
+Hypervolume Mean: -2777.0666666666666
+Best Pareto: Execution 9
+Best Hypervolume: -3048.0
+
+Execution Time: 5045
