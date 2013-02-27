@@ -18,7 +18,6 @@ public class Reader {
     private InputStream file;
     private List<Mutant> mutants;
     private List<Product> products;
-    private static Reader INSTANCE;
 
     public Reader(String filePath, String separator) throws FileNotFoundException {
         this(new FileInputStream(filePath), separator);
@@ -94,13 +93,5 @@ public class Reader {
                 mutant.getProductMutantList().add(productMutant);
             }
         }
-    }
-
-    public static Reader getDefaultReader() {
-        if (INSTANCE == null) {
-            INSTANCE = new Reader(Reader.class.getResourceAsStream("/br/inf/ufpr/resource/input.txt"), " ");
-            INSTANCE.read();
-        }
-        return INSTANCE;
     }
 }

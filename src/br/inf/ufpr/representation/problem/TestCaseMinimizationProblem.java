@@ -110,13 +110,13 @@ public class TestCaseMinimizationProblem extends Problem {
             OutputStreamWriter osw = new OutputStreamWriter(fos);
             BufferedWriter bw = new BufferedWriter(osw);
 
-            double lowerHypervolume = Double.MAX_VALUE;
+            double maxHypervolume = Double.MIN_VALUE;
             int bestFile = 0;
             double mean = 0;
             for (int i = 0; i < execucoes; i++) {
                 mean += hypervolume[i];
-                if (hypervolume[i] < lowerHypervolume) {
-                    lowerHypervolume = hypervolume[i];
+                if (hypervolume[i] > maxHypervolume) {
+                    maxHypervolume = hypervolume[i];
                     bestFile = i;
                 }
             }
@@ -136,7 +136,7 @@ public class TestCaseMinimizationProblem extends Problem {
             bw.newLine();
             bw.write("Best Pareto: Execution " + bestFile);
             bw.newLine();
-            bw.write("Best Hypervolume: " + lowerHypervolume);
+            bw.write("Best Hypervolume: " + maxHypervolume);
             bw.newLine();
             bw.newLine();
             bw.write("Execution Time: " + estimatedTime / 100);
