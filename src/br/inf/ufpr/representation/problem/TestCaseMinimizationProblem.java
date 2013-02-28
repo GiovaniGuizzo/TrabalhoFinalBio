@@ -4,7 +4,7 @@
  */
 package br.inf.ufpr.representation.problem;
 
-import br.inf.ufpr.main.NSGAII;
+import br.inf.ufpr.main.NSGAIIExperiment;
 import br.inf.ufpr.representation.solution.ProductArraySolutionType;
 import br.inf.ufpr.pojo.Mutant;
 import br.inf.ufpr.pojo.Product;
@@ -22,6 +22,7 @@ import java.util.logging.Logger;
 import jmetal.core.Problem;
 import jmetal.core.Solution;
 import jmetal.util.JMException;
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 /**
  *
@@ -87,19 +88,19 @@ public class TestCaseMinimizationProblem extends Problem {
             bw.flush();
             bw.close();
         } catch (IOException ex) {
-            Logger.getLogger(NSGAII.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(NSGAIIExperiment.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
                 if (fos != null) {
                     fos.close();
                 }
             } catch (IOException ex) {
-                Logger.getLogger(NSGAII.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(NSGAIIExperiment.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
 
-    public void writeHypervolume(String filePath, int execucoes, int populationSize, int maxEvaluations, double mutationProbability, double crossoverProbability, double[] hypervolume, long estimatedTime) {
+    public void writeHypervolume(String filePath, int execucoes, int populationSize, int maxEvaluations, double mutationProbability, double crossoverProbability, int archiveSize, String algorithm, double[] hypervolume, long estimatedTime) {
         FileOutputStream fos = null;
         try {
             File file = new File(filePath);
@@ -112,16 +113,19 @@ public class TestCaseMinimizationProblem extends Problem {
 
             double maxHypervolume = Double.MIN_VALUE;
             int bestFile = 0;
-            double mean = 0;
             for (int i = 0; i < execucoes; i++) {
-                mean += hypervolume[i];
                 if (hypervolume[i] > maxHypervolume) {
                     maxHypervolume = hypervolume[i];
                     bestFile = i;
                 }
             }
-            mean = mean / execucoes;
-
+            
+            DescriptiveStatistics descriptiveStatistics = new DescriptiveStatistics(hypervolume);
+            
+            bw.write("Algorithm: " + algorithm);
+            bw.newLine();
+            bw.newLine();
+            
             bw.write("Crossover Probability: " + crossoverProbability);
             bw.newLine();
             bw.write("Mutation Probability: " + mutationProbability);
@@ -132,26 +136,34 @@ public class TestCaseMinimizationProblem extends Problem {
             bw.newLine();
             bw.write("Number of Generations: " + (maxEvaluations / populationSize));
             bw.newLine();
-            bw.write("Hypervolume Mean: " + mean);
+            bw.write("Archive Size: " + archiveSize);
             bw.newLine();
             bw.write("Best Pareto: Execution " + bestFile);
             bw.newLine();
+            bw.newLine();
+            
+            
             bw.write("Best Hypervolume: " + maxHypervolume);
             bw.newLine();
+            bw.write("Hypervolume Mean: " + descriptiveStatistics.getMean());
             bw.newLine();
-            bw.write("Execution Time: " + estimatedTime / 100);
+            bw.write("Hypervolume Standard Deviation: " + descriptiveStatistics.getStandardDeviation());
+            bw.newLine();
+            bw.newLine();
+            
+            bw.write("Execution Time: " + estimatedTime / 1000);
 
             bw.flush();
             bw.close();
         } catch (IOException ex) {
-            Logger.getLogger(NSGAII.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(NSGAIIExperiment.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
                 if (fos != null) {
                     fos.close();
                 }
             } catch (IOException ex) {
-                Logger.getLogger(NSGAII.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(NSGAIIExperiment.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }

@@ -1,45 +1,35 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package br.inf.ufpr.main;
 
 import br.inf.ufpr.reader.Reader;
 import br.inf.ufpr.representation.problem.TestCaseMinimizationProblem;
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
 import jmetal.core.Algorithm;
 import jmetal.core.Operator;
 import jmetal.core.SolutionSet;
-import jmetal.operators.crossover.*;
-import jmetal.operators.mutation.*;
-import jmetal.operators.selection.*;
+import jmetal.metaheuristics.spea2.SPEA2;
+import jmetal.operators.crossover.CrossoverFactory;
+import jmetal.operators.mutation.MutationFactory;
+import jmetal.operators.selection.SelectionFactory;
 import jmetal.qualityIndicator.QualityIndicator;
 import jmetal.util.JMException;
-import jmetal.util.PseudoRandom;
 
 /**
- * Class to configure and execute the NSGA-II algorithm.
  *
- * Besides the classic NSGA-II, a steady-state version (ssNSGAII) is also
- * included (See: J.J. Durillo, A.J. Nebro, F. Luna and E. Alba
- * "On the Effect of the Steady-State Selection Scheme in
- * Multi-Objective Genetic Algorithms"
- * 5th International Conference, EMO 2009, pp: 183-197.
- * April 2009)
+ * @author giovaniguizzo
  */
-public class NSGAII {
+public class SPEA2Experiment {
 
-    /**
-     * @param args Command line arguments.
-     * @throws JMException
-     * @throws IOException
-     * @throws SecurityException
-     * Usage: four options
-     * - br.inf.ufpr.main.NSGAII populationSize maxEvaluations crossoverProbability mutationProbability
-     */
     public static void main(String... args) throws JMException, SecurityException, IOException, ClassNotFoundException {
-
         int execucoes = 30;
         int populationSize = 0;
         int maxEvaluations = 0;
+        int archiveSize = 0;
         double crossoverProbability = 0;
         double mutationProbability = 0;
 
@@ -49,14 +39,37 @@ public class NSGAII {
             System.out.println("\t2 - Max Evaluations (int);");
             System.out.println("\t3 - Crossover Probability (double);");
             System.out.println("\t4 - Mutation Probability (double);");
+            System.out.println("\t5 - Archive Size (int);");
             System.exit(0);
         } else {
             populationSize = Integer.valueOf(args[0]);
             maxEvaluations = Integer.valueOf(args[1]);
             crossoverProbability = Double.valueOf(args[2]);
             mutationProbability = Double.valueOf(args[3]);
+            archiveSize = Integer.valueOf(args[4]);
         }
 
+        SPEA2Experiment spea2 = new SPEA2Experiment(populationSize, maxEvaluations, crossoverProbability, mutationProbability, archiveSize, execucoes);
+        spea2.execute();
+
+    }
+    private final int populationSize;
+    private final int maxEvaluations;
+    private final double crossoverProbability;
+    private final double mutationProbability;
+    private final int execucoes;
+    private final int archiveSize;
+
+    public SPEA2Experiment(int populationSize, int maxEvaluations, double crossoverProbability, double mutationProbability, int archiveSize, int execucoes) {
+        this.populationSize = populationSize;
+        this.maxEvaluations = maxEvaluations;
+        this.crossoverProbability = crossoverProbability;
+        this.mutationProbability = mutationProbability;
+        this.execucoes = execucoes;
+        this.archiveSize = archiveSize;
+    }
+
+    public void execute() throws JMException, ClassNotFoundException {
         TestCaseMinimizationProblem problem; // The problem to solve
         Algorithm algorithm; // The algorithm to use
         Operator crossover; // Crossover operator
@@ -65,16 +78,17 @@ public class NSGAII {
 
         HashMap parameters; // Operator parameters
 
-        Reader reader = new Reader(NSGAII.class.getResourceAsStream("/br/inf/ufpr/resource/input.txt"), " ");
+        Reader reader = new Reader(NSGAIIExperiment.class.getResourceAsStream("/br/inf/ufpr/resource/input.txt"), " ");
         reader.read();
         problem = new TestCaseMinimizationProblem(reader.getProducts(), reader.getMutants());
 
-        algorithm = new jmetal.metaheuristics.nsgaII.NSGAII(problem);
+        algorithm = new SPEA2(problem);
         //algorithm = new ssNSGAII(problem);
 
         // Algorithm parameters
         algorithm.setInputParameter("populationSize", populationSize);
         algorithm.setInputParameter("maxEvaluations", maxEvaluations);
+        algorithm.setInputParameter("archiveSize", archiveSize);
 
         // Mutation and Crossover for Real codification 
         parameters = new HashMap();
@@ -89,7 +103,7 @@ public class NSGAII {
         parameters = new HashMap();
         parameters.put("problem", problem);
         parameters.put("populationSize", algorithm.getInputParameter("populationSize"));
-        selection = SelectionFactory.getSelectionOperator("BinaryTournament", parameters);
+        selection = SelectionFactory.getSelectionOperator("BinaryTournament2", parameters);
 
         // Add the operators to the algorithm
         algorithm.addOperator("crossover", crossover);
@@ -98,15 +112,11 @@ public class NSGAII {
 
         double[] hypervolume = new double[execucoes];
 
-        long initTime;
-
-        File dir;
-
-        do {
-            initTime = System.currentTimeMillis();
-            dir = new File("RESULT_" + initTime + "_" + PseudoRandom.randInt());
-        } while (dir.exists());
-        dir.mkdir();
+        long initTime = System.currentTimeMillis();
+        File dir = new File("RESULT_" + initTime);
+        if (!dir.exists()) {
+            dir.mkdir();
+        }
 
         problem.writeHypervolumeParetoFront(dir.getPath() + "/PARETO");
         QualityIndicator indicator = new QualityIndicator(problem, dir.getPath() + "/PARETO");
@@ -124,8 +134,9 @@ public class NSGAII {
             //Hypervolume
             double value = indicator.getHypervolume(population);
             hypervolume[i] = value;
+            System.out.println(i + " - " + value);
         }
         long estimatedTime = System.currentTimeMillis() - initTime;
-        problem.writeHypervolume(dir.getPath() + "/A_RESULT", execucoes, populationSize, maxEvaluations, mutationProbability, crossoverProbability, hypervolume, estimatedTime);
-    } //main
-} // NSGAII_main
+        problem.writeHypervolume(dir.getPath() + "/A_RESULT", execucoes, populationSize, maxEvaluations, mutationProbability, crossoverProbability, archiveSize, "SPEA2", hypervolume, estimatedTime);
+    }
+}
