@@ -80,6 +80,7 @@ public class Reader {
             List<String> asList = Arrays.asList(line.split(separator));
             Iterator<String> tokenIterator = asList.iterator();
             //First value is the Mutant ID
+          
             Long id = Long.valueOf(tokenIterator.next());
             Mutant mutant = new Mutant(id);
             mutant.setProductMutantList(new ArrayList<ProductMutant>());
@@ -92,6 +93,7 @@ public class Reader {
                 product.getProductMutantList().add(productMutant);
                 mutant.getProductMutantList().add(productMutant);
             }
+      
         }
     }
 }

@@ -5,8 +5,6 @@
 package br.inf.ufpr.main;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 import jmetal.qualityIndicator.Hypervolume;
 import jmetal.qualityIndicator.util.MetricsUtil;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
