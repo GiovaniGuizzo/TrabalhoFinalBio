@@ -27,6 +27,7 @@ public class ExecutionMultipleConfiguration {
             System.out.println("\t\tCrossoverProbability - Crossover Probability (double);");
             System.out.println("\t\tMutationProbability - Mutation Probability (double);");
             System.out.println("\t\tArchiveSize - Archive Size (int);");
+            System.out.println("\t\tInputFile - The input file containing products and mutants.");
             System.exit(0);
         } else {
             String algorithm = args[0];
@@ -38,14 +39,15 @@ public class ExecutionMultipleConfiguration {
                 int maxEvaluations = Integer.valueOf(properties.getProperty("MaxEvaluations"));
                 double crossoverProbability = Double.valueOf(properties.getProperty("CrossoverProbability"));
                 double mutationProbability = Double.valueOf(properties.getProperty("MutationProbability"));
+                String inputFile = properties.getProperty("InputFile");
                 switch (algorithm) {
                     case "NSGA-II":
-                        NSGAIIExperiment nsgaII = new NSGAIIExperiment(populationSize, maxEvaluations, crossoverProbability, mutationProbability, 30);
+                        NSGAIIExperiment nsgaII = new NSGAIIExperiment(populationSize, maxEvaluations, crossoverProbability, mutationProbability, 30, inputFile);
                         nsgaII.execute();
                         break;
                     case "SPEA2":
                         int archiveSize = Integer.valueOf(properties.getProperty("ArchiveSize"));
-                        SPEA2Experiment spea2 = new SPEA2Experiment(populationSize, maxEvaluations, crossoverProbability, mutationProbability, archiveSize, 30);
+                        SPEA2Experiment spea2 = new SPEA2Experiment(populationSize, maxEvaluations, crossoverProbability, mutationProbability, archiveSize, 30, inputFile);
                         spea2.execute();
                         break;
                     default:

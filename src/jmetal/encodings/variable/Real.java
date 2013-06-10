@@ -31,7 +31,7 @@ import jmetal.util.Configuration.*;
 /**
  * This class implements a Real value decision variable
  */
-public class Real extends Variable{
+public class Real extends Variable implements Comparable<Real> {
 
   /**
    * Stores the value of the real variable
@@ -149,4 +149,9 @@ public class Real extends Variable{
   public String toString(){
     return value_+"";
   } //toString
+
+    @Override
+    public int compareTo(Real o) {
+        return Double.compare(this.getValue(), o.getValue());
+    }
 } // Real
