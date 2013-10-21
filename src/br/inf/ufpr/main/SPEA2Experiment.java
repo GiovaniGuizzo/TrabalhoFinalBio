@@ -210,6 +210,7 @@ public class SPEA2Experiment {
             System.out.println(i + " - " + value);
         }
         long estimatedTime = System.currentTimeMillis() - initTime;
+        problem.writeAllHypervolume(dir.getPath(),hypervolume);
         problem.writeHypervolume(dir.getPath() + "/A_RESULT", execucoes, populationSize, maxEvaluations, mutationProbability, crossoverProbability, archiveSize, "SPEA2", hypervolume, estimatedTime, inputFile);
     }
 }

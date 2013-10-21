@@ -10,6 +10,7 @@ import jmetal.core.Algorithm;
 import jmetal.core.Operator;
 import jmetal.core.Problem;
 import jmetal.core.SolutionSet;
+import jmetal.metaheuristics.omopso.OMOPSO;
 import jmetal.operators.crossover.*;
 import jmetal.operators.mutation.*;
 import jmetal.operators.selection.*;
@@ -78,73 +79,6 @@ public class NSGAIIExperiment {
         this.execucoes = execucoes;
         this.inputFile = inputFile;
     }
-
-    public void executeDTLZ() throws JMException, ClassNotFoundException{
-        Problem problem; // The problem to solve
-        Algorithm algorithm; // The algorithm to use
-        Operator crossover; // Crossover operator
-        Operator mutation; // Mutation operator
-        Operator selection; // Selection operator
-
-        HashMap parameters; // Operator parameters
-
-        problem = new DTLZ7("Real", 22, 2);
-        
-        algorithm = new jmetal.metaheuristics.nsgaII.NSGAII(problem);
-        //algorithm = new ssNSGAII(problem);
-
-        // Algorithm parameters
-        algorithm.setInputParameter("populationSize", populationSize);
-        algorithm.setInputParameter("maxEvaluations", maxEvaluations);
-
-        // Mutation and Crossover for Real codification 
-        parameters = new HashMap();
-        parameters.put("probability", crossoverProbability);
-        crossover = CrossoverFactory.getCrossoverOperator("SBXCrossover", parameters);
-
-        parameters = new HashMap();
-        parameters.put("probability", mutationProbability);
-        mutation = MutationFactory.getMutationOperator("PolynomialMutation", parameters);
-
-        // Selection Operator 
-        parameters = new HashMap();
-        parameters.put("problem", problem);
-        parameters.put("populationSize", algorithm.getInputParameter("populationSize"));
-        selection = SelectionFactory.getSelectionOperator("BinaryTournament2", parameters);
-
-        // Add the operators to the algorithm
-        algorithm.addOperator("crossover", crossover);
-        algorithm.addOperator("mutation", mutation);
-        algorithm.addOperator("selection", selection);
-        
-        double[] hypervolume = new double[execucoes];
-
-        long initTime = System.currentTimeMillis();
-        File dir = new File("RESULT_" + initTime);
-        if (!dir.exists()) {
-            dir.mkdir();
-        }
-
-        QualityIndicator indicator = new QualityIndicator(problem, "./DTLZ7_PARETO");
-
-        for (int i = 0; i < execucoes; i++) {
-            // Execute the Algorithm
-
-            SolutionSet population = algorithm.execute();
-
-            // Result messages 
-            population.sortSolutions();
-            population.printVariablesToFile(dir.getPath() + "/VAR_" + i + ".dat");
-            population.printObjectivesToFile(dir.getPath() + "/FUN_" + i + ".dat");
-
-            //Hypervolume
-            double value = indicator.getHypervolume(population);
-            hypervolume[i] = value;
-            System.out.println(i + " - " + value);
-        }
-        long estimatedTime = System.currentTimeMillis() - initTime;
-        problem.writeHypervolume(dir.getPath() + "/A_RESULT", execucoes, populationSize, maxEvaluations, mutationProbability, crossoverProbability, 0, "NSGA-II - DTLZ7", hypervolume, estimatedTime, "NONE");
-    }
     
     public void execute() throws JMException, ClassNotFoundException, FileNotFoundException {
 
@@ -160,7 +94,7 @@ public class NSGAIIExperiment {
         reader.read();
         problem = new TestCaseMinimizationProblem(reader.getProducts(), reader.getMutants());
 
-        algorithm = new jmetal.metaheuristics.nsgaII.NSGAII(problem);
+        algorithm = new OMOPSO(problem);
         //algorithm = new ssNSGAII(problem);
 
         // Algorithm parameters
@@ -214,6 +148,7 @@ public class NSGAIIExperiment {
             System.out.println(i + " - " + value);
         }
         long estimatedTime = System.currentTimeMillis() - initTime;
+        problem.writeAllHypervolume(dir.getPath(),hypervolume);
         problem.writeHypervolume(dir.getPath() + "/A_RESULT", execucoes, populationSize, maxEvaluations, mutationProbability, crossoverProbability, 0, "NSGA-II", hypervolume, estimatedTime, inputFile);
     }
-} // NSGAII_main
+}

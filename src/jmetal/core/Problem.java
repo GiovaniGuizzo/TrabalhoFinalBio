@@ -21,9 +21,11 @@
 package jmetal.core;
 
 import br.inf.ufpr.main.NSGAIIExperiment;
+import br.inf.ufpr.main.StandardDeviation;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Serializable;
@@ -274,15 +276,15 @@ public abstract class Problem implements Serializable {
                     bestFile = i;
                 }
             }
-            
+
             DescriptiveStatistics descriptiveStatistics = new DescriptiveStatistics(hypervolume);
-            
+
             bw.write("Algorithm: " + algorithm);
             bw.newLine();
             bw.write("Input File: " + inputFile);
             bw.newLine();
             bw.newLine();
-            
+
             bw.write("Crossover Probability: " + crossoverProbability);
             bw.newLine();
             bw.write("Mutation Probability: " + mutationProbability);
@@ -298,8 +300,8 @@ public abstract class Problem implements Serializable {
             bw.write("Best Pareto: Execution " + bestFile);
             bw.newLine();
             bw.newLine();
-            
-            
+
+
             bw.write("Best Hypervolume: " + maxHypervolume);
             bw.newLine();
             bw.write("Hypervolume Mean: " + descriptiveStatistics.getMean());
@@ -307,7 +309,7 @@ public abstract class Problem implements Serializable {
             bw.write("Hypervolume Standard Deviation: " + descriptiveStatistics.getStandardDeviation());
             bw.newLine();
             bw.newLine();
-            
+
             bw.write("Execution Time: " + estimatedTime / 1000);
 
             bw.flush();
@@ -322,6 +324,18 @@ public abstract class Problem implements Serializable {
             } catch (IOException ex) {
                 Logger.getLogger(NSGAIIExperiment.class.getName()).log(Level.SEVERE, null, ex);
             }
+        }
+    }
+
+    public void writeAllHypervolume(String path, double[] hypervolume) {
+        try {
+            FileWriter fw = new FileWriter(path + "/HYPERVOLUME");
+            for (double d : hypervolume) {
+                fw.append(Double.toString(d) + ", ");
+                fw.flush();
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(StandardDeviation.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 } // Problem
